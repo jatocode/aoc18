@@ -12,8 +12,12 @@ function read(file, callback) {
 
 read(args[0], function(data) {
     var lines = data.split('\n');
+    let freq = 0;
     for(let l of lines) {
-
+        if(l.length == 0) continue;
+        f = parseInt(l);
+        freq += f;
     }
+    console.log(freq);
 });
 

@@ -1,5 +1,7 @@
 # aoc18
 Advent of code 2018
 
+http://www.adventofcode.com
+
 #
-Tror jag kör Javascript i år med
+Javascript
