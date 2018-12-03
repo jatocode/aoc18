@@ -34,12 +34,11 @@ read(args[0], function (data) {
                 for (let x = left; x < left+width; x++) {
                     if (!fabric[y]) fabric[y] = [];
 
-                    let node = fabric[y][x] || { id: [], count: 0 };
-                    node.id.push(id);
-                    node.count++;
+                    let node = fabric[y][x] || [];
+                    node.push(id);
                     fabric[y][x] = node;
                     
-                    if (node.count == 2) overlap++;
+                    if (node.length == 2) overlap++;
 
                     if (y > maxy) maxy = y;
                     if (x > maxx) maxx = x;
@@ -47,25 +46,6 @@ read(args[0], function (data) {
             }
         }
     }
-
-    // Skriv ut
-    // for (let y = 0; y <= maxy + 1; y++) {
-    //     let row = '';
-    //     for (let x = 0; x <= maxx + 1; x++) {
-    //         if (fabric[y]) {
-    //             let node = fabric[y][x];
-    //             if (node) {
-    //                 if (node.count > 1) row += 'X';
-    //                 else row += node.id;
-    //             } else {
-    //                 row += '.';
-    //             }
-    //         } else {
-    //             row += '.';
-    //         }
-    //     }
-    //     console.log(row);
-    // }
 
     console.log('Del 1: ' + overlap);
 
@@ -75,7 +55,7 @@ read(args[0], function (data) {
                 let node = fabric[y][x];
                 if (node) {
                     // Ta bort alla claims som delar nod
-                    if(node.id.length > 1) node.id.map(x => claims[x] = false);
+                    if(node.length > 1) node.map(x => claims[x] = false);
                 }
             }
         }
