@@ -36,7 +36,7 @@ read(args[0], function (data) {
                 for (let x = left; x < left+width; x++) {
                     if (!fabric[y]) fabric[y] = [];
 
-                    let node = fabric[y][x] || { id: [], x: x, y: y, count: 0 };
+                    let node = fabric[y][x] || { id: [], count: 0 };
                     node.id.push(id);
                     node.count++;
                     fabric[y][x] = node;
