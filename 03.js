@@ -24,11 +24,12 @@ read(args[0], function (data) {
         let match = l.match(/#(\d+) @ (\d+),(\d+): (\d+)x(\d+)/);
 
         if (match.length) {
-            let id = parseInt(match[1]);
-            let left = parseInt(match[2]);
-            let top = parseInt(match[3]);
-            let width = parseInt(match[4]);
-            let height = parseInt(match[5]);
+            // + istället för parseInt
+            let id = +match[1];
+            let left = +match[2];
+            let top = +match[3];
+            let width = +match[4];
+            let height = +match[5];
 
             claims[id] = true;
 
