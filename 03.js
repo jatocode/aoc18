@@ -24,13 +24,10 @@ read(args[0], function (data) {
         let match = l.match(/#(\d+) @ (\d+),(\d+): (\d+)x(\d+)/);
 
         if (match.length) {
+            var id, left, top, width, height;
             // + istället för parseInt
-            let id = +match[1];
-            let left = +match[2];
-            let top = +match[3];
-            let width = +match[4];
-            let height = +match[5];
-
+            [id, left, top, width, height] = [+match[1], +match[2], +match[3], +match[4], +match[5]];
+  
             claims[id] = true;
 
             for (let y = top; y < top+height; y++) {
