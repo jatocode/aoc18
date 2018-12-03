@@ -17,6 +17,8 @@ read(args[0], function (data) {
     var overlap = 0;
     var maxx = 0;
     var maxy = 0;
+
+    var claims = [];
     for (let l of lines) {
         if (l.length == 0) continue;
         let match = l.match(/#(\d+) @ (\d+),(\d+): (\d+)x(\d+)/);
@@ -28,30 +30,33 @@ read(args[0], function (data) {
             let width = parseInt(match[4]);
             let height = parseInt(match[5]);
 
+            claims.push(id);
+
             for (let y = 0; y < height; y++) {
                 for (let x = 0; x < width; x++) {
                     if (!fabric[top + y]) fabric[top + y] = [];
-                    let node = fabric[top + y][x + left] || { id: id, x: left + x, y: top + y, count: 0 };
+                    let node = fabric[top + y][x + left] || { id: [], x: left + x, y: top + y, count: 0 };
+                    node.id.push(id);
                     node.count++;
-                    if(node.count == 2) overlap++;
+                    if (node.count == 2) overlap++;
                     fabric[top + y][x + left] = node;
-                    if(top+y > maxy) maxy = top + y;
-                    if(left+x > maxx) maxx = left + x;
+                    if (top + y > maxy) maxy = top + y;
+                    if (left + x > maxx) maxx = left + x;
                 }
             }
         }
     }
 
     // Skriv ut
-    // for (let y = 0; y < maxy; y++) {
+    // for (let y = 0; y <= maxy + 1; y++) {
     //     let row = '';
-    //     for (let x = 0; x < maxx; x++) {
+    //     for (let x = 0; x <= maxx + 1; x++) {
     //         if (fabric[y]) {
     //             let node = fabric[y][x];
     //             if (node) {
-    //                 if(node.count > 1) row += 'X';
+    //                 if (node.count > 1) row += 'X';
     //                 else row += node.id;
-    //             } else { 
+    //             } else {
     //                 row += '.';
     //             }
     //         } else {
@@ -61,6 +66,18 @@ read(args[0], function (data) {
     //     console.log(row);
     // }
 
-    console.log(overlap);
+    console.log('Del 1: ' + overlap);
 
+    for (let y = 0; y <= maxy; y++) {
+        for (let x = 0; x <= maxx; x++) {
+            if (fabric[y]) {
+                let node = fabric[y][x];
+                if (node) {
+                    // Ta bort alla claims som delar nod
+                    if(node.id.length > 1) claims = claims.filter(x => !node.id.includes(x));
+                }
+            }
+        }
+    }
+    console.log('Del 2: ' + claims);
 });
