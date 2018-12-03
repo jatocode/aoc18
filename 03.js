@@ -30,18 +30,21 @@ read(args[0], function (data) {
             let width = parseInt(match[4]);
             let height = parseInt(match[5]);
 
-            claims.push(id);
+            claims[id] = true;
 
-            for (let y = 0; y < height; y++) {
-                for (let x = 0; x < width; x++) {
-                    if (!fabric[top + y]) fabric[top + y] = [];
-                    let node = fabric[top + y][x + left] || { id: [], x: left + x, y: top + y, count: 0 };
+            for (let y = top; y < top+height; y++) {
+                for (let x = left; x < left+width; x++) {
+                    if (!fabric[y]) fabric[y] = [];
+
+                    let node = fabric[y][x] || { id: [], x: x, y: y, count: 0 };
                     node.id.push(id);
                     node.count++;
+                    fabric[y][x] = node;
+                    
                     if (node.count == 2) overlap++;
-                    fabric[top + y][x + left] = node;
-                    if (top + y > maxy) maxy = top + y;
-                    if (left + x > maxx) maxx = left + x;
+
+                    if (y > maxy) maxy = y;
+                    if (x > maxx) maxx = x;
                 }
             }
         }
@@ -74,10 +77,12 @@ read(args[0], function (data) {
                 let node = fabric[y][x];
                 if (node) {
                     // Ta bort alla claims som delar nod
-                    if(node.id.length > 1) claims = claims.filter(x => !node.id.includes(x));
+                    if(node.id.length > 1) node.id.map(x => claims[x] = false);
                 }
             }
         }
     }
-    console.log('Del 2: ' + claims);
+    claims.forEach((x,i) => { 
+        if(x) console.log('Del 2: '+ i) 
+    });
 });
