@@ -32,8 +32,9 @@ read(args[0], function (data) {
     let start, end;
     let sleep = [];
     let minutes = [];
-    let freq = [];
     let guardm = [];
+    let wg2 = {max: 0};
+
     for (let g of guardroll) {
         let m = g.gi.match(/Guard #(\d+).*/);
         if (m) {
@@ -59,17 +60,15 @@ read(args[0], function (data) {
                 for (t = startmin; t < endmin; t++) {
                     let t2 = t % 60;
                     minutes[guard][t2] += 1;
-
-                    if (!freq[t2]) freq[t2] = [];
-                    freq[t2].push(guard);
+                    
+                    let max = Math.max(...minutes[guard]);
+                    if(max > wg2.max) {
+                        wg2.max = max;
+                        wg2.id = guard;
+                        wg2.minute = minutes[guard].findIndex(x => x == max); 
+                    }
                 }
 
-                row = '';
-                minutes[guard].forEach(x => {
-                    if (x == 0) row += '.'
-                    else row += x;
-                });
-                //console.log(guard + ' ' + row);
                 sleep[guard] = sleep[guard] == undefined ? slept : sleep[guard] + slept;
             }
         }
@@ -92,29 +91,6 @@ read(args[0], function (data) {
     let maxi = minutes[wg].findIndex(x => x == wm);
 
     console.log('Del 1: Sämsta vakten ' + wg + ' i minut ' + maxi + ' -> ' + wg * maxi);
+    console.log('Del 2, sämsta vakten: ' + wg2.id + ' i minut ' + wg2.minute + ' -> ' + wg2.minute * +wg2.id);
 
-    freq.forEach((m,i) => {
-        var freq2 = {};
-
-        // Summera per minut
-        m.forEach(x => {
-            freq2[x] = (freq2[x] || 0) + 1
-        });
-
-        // Spara per vakt
-        Object.keys(freq2).forEach(x => {
-            if(freq2[x] > guardm[x].max) {
-                guardm[x].max = freq2[x];
-                guardm[x].minute = i;
-                guardm[x].id = x;
-            }
-        });
-    });
-    let wguard = {max: 0};
-    guardm.forEach(x => {
-        if(x) {
-            wguard = x.max > wguard.max?x:wguard;
-        }
-    });
-    console.log('Del 2, sämsta vakten: ' + wguard.id + ' i minut ' + wguard.minute + ' -> ' + wguard.minute * +wguard.id);
 });
