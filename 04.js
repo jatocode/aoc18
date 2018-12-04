@@ -32,55 +32,59 @@ read(args[0], function (data) {
     let start, end;
     let sleep = [];
     let minutes = [];
-    for(let g of guardroll) {
+    for (let g of guardroll) {
         let m = g.gi.match(/Guard #(\d+).*/);
-        if(m) {
+        if (m) {
             guard = +m[1];
             //console.log(guard);
         } else {
-            if(g.gi == 'falls asleep') {
+            if (g.gi == 'falls asleep') {
                 start = g.d;
-                console.log(start);
-            } 
-            if(g.gi == 'wakes up') {
+            }
+            if (g.gi == 'wakes up') {
                 end = g.d;
-                console.log(end);
-                let slept =  (end - start)/1000/60;
-                console.log(start.getTimezoneOffset());
+                let slept = (end - start) / 1000 / 60;
                 let startmin = start.getMinutes();
-                let endmin   = end.getMinutes();
-                console.log({startmin, endmin});
-                if(!minutes[guard]) {
+                let endmin = end.getMinutes();
+
+                if (!minutes[guard]) {
                     minutes[guard] = [];
-                    for(var i=0;i<60;i++) minutes[guard][i] = 0;
+                    for (var i = 0; i < 60; i++) minutes[guard][i] = 0;
                 }
-                let sleepmin = [];
-                for(t = startmin; t < endmin+60; t++) {
+
+                endmin = endmin < startmin ? endmin + 60 : endmin;
+                for (t = startmin; t < endmin; t++) {
                     let t2 = t % 60;
-                    minutes[guard][t2] = minutes[guard][t2] + 1;
+                    minutes[guard][t2] += 1;
                 }
-                //console.log(minutes[guard]);
+
                 row = '';
-                minutes[guard].forEach(x => { 
-                    if(x == 1) row += '.'
-                    else row += '#';
-                } );
-                console.log(guard + ' ' + row);
-                //console.log('Slept ' + slept);
-                sleep[guard] = sleep[guard] == undefined? slept : sleep[guard] + slept;
+                minutes[guard].forEach(x => {
+                    if (x == 0) row += '.'
+                    else row += x;
+                });
+                //console.log(guard + ' ' + row);
+                sleep[guard] = sleep[guard] == undefined ? slept : sleep[guard] + slept;
             }
         }
     }
 
-    sleep.forEach((s, i) => {
-        if(s) {
-            console.log(i + ':' + s);
+    let wg = -1;
+    let max = 0;
+    for (let i = 0; i < sleep.length; i++) {
+        const s = sleep[i];
 
-            let max = Math.max(...minutes[i]);
-            let maxi = minutes[i].findIndex(x => x == max);
-
-            console.log(maxi + ':' + max);
+        if (s) {
+            if (s > max) {
+                max = s;
+                wg = i;
+            }
         }
-    })
+    }
+
+    let wm = Math.max(...minutes[wg]);
+    let maxi = minutes[wg].findIndex(x => x == wm);
+
+    console.log('Worst guard ' + wg + ' in minute ' + maxi + ' -> ' + wg * maxi);
 
 });
