@@ -13,13 +13,17 @@ function read(file, callback) {
 read(args[0], function (data) {
     var lines = data.split('\n');
 
+    let guardinfo = [];
     for (let l of lines) {
         if (l.length == 0) continue;
-        let m = l.match(/\[\d+-(\d+)-(\d+) (\d+):(\d+)\](.*)/);
-        var month, day, hour, minute, guard;
-        [month, day, hour, minute, guard] = [+m[1], +m[2], +m[3], +m[4], m[5]];
-        console.log({ month, day, hour, minute, guard });
-
+        let m = l.match(/\[(.*)\] (.*)/);
+        var ds, guard;
+        [ds, guard] = [m[1], m[2]];
+        let d = new Date(ds + ' GMT+0000'); // I FUCKING HATE JAVASCRIPT DATE
+        guardinfo.push({ d: d, gi: guard });
     }
+
+    guardinfo.sort((a, b) => a.d - b.d);
+    console.log(guardinfo);
 
 });
