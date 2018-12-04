@@ -32,10 +32,13 @@ read(args[0], function (data) {
     let start, end;
     let sleep = [];
     let minutes = [];
+    let freq = [];
+    let guardm = [];
     for (let g of guardroll) {
         let m = g.gi.match(/Guard #(\d+).*/);
         if (m) {
             guard = +m[1];
+            guardm[guard] = {max:0, minute:-1};
             //console.log(guard);
         } else {
             if (g.gi == 'falls asleep') {
@@ -56,6 +59,9 @@ read(args[0], function (data) {
                 for (t = startmin; t < endmin; t++) {
                     let t2 = t % 60;
                     minutes[guard][t2] += 1;
+
+                    if (!freq[t2]) freq[t2] = [];
+                    freq[t2].push(guard);
                 }
 
                 row = '';
@@ -85,6 +91,30 @@ read(args[0], function (data) {
     let wm = Math.max(...minutes[wg]);
     let maxi = minutes[wg].findIndex(x => x == wm);
 
-    console.log('Worst guard ' + wg + ' in minute ' + maxi + ' -> ' + wg * maxi);
+    console.log('Del 1: Sämsta vakten ' + wg + ' i minut ' + maxi + ' -> ' + wg * maxi);
 
+    freq.forEach((m,i) => {
+        var freq2 = {};
+
+        // Summera per minut
+        m.forEach(x => {
+            freq2[x] = (freq2[x] || 0) + 1
+        });
+
+        // Spara per vakt
+        Object.keys(freq2).forEach(x => {
+            if(freq2[x] > guardm[x].max) {
+                guardm[x].max = freq2[x];
+                guardm[x].minute = i;
+                guardm[x].id = x;
+            }
+        });
+    });
+    let wguard = {max: 0};
+    guardm.forEach(x => {
+        if(x) {
+            wguard = x.max > wguard.max?x:wguard;
+        }
+    });
+    console.log('Del 2, sämsta vakten: ' + wguard.id + ' i minut ' + wguard.minute + ' -> ' + wguard.minute * +wguard.id);
 });
