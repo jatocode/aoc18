@@ -1,4 +1,7 @@
-var fs = require('fs');
+const fs = require('fs');
+const setTZ = require('set-tz');
+
+setTZ('UTC');
 var args = process.argv.slice(2);
 
 function read(file, callback) {
@@ -19,7 +22,7 @@ read(args[0], function (data) {
         let m = l.match(/\[(.*)\] (.*)/);
         let ds, guard;
         [ds, guard] = [m[1], m[2]];
-        let d = new Date(ds + ' GMT+0000'); // I FUCKING HATE JAVASCRIPT DATE
+        let d = new Date(ds); // I FUCKING HATE JAVASCRIPT DATE
         guardroll.push({ d: d, gi: guard });
     }
 
