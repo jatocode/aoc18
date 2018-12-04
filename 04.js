@@ -34,6 +34,7 @@ read(args[0], function (data) {
     let minutes = [];
     let guardm = [];
     let wg2 = {max: 0};
+    let wg = {max: 0};
 
     for (let g of guardroll) {
         let m = g.gi.match(/Guard #(\d+).*/);
@@ -60,7 +61,7 @@ read(args[0], function (data) {
                 for (t = startmin; t < endmin; t++) {
                     let t2 = t % 60;
                     minutes[guard][t2] += 1;
-                    
+
                     let max = Math.max(...minutes[guard]);
                     if(max > wg2.max) {
                         wg2.max = max;
@@ -70,27 +71,18 @@ read(args[0], function (data) {
                 }
 
                 sleep[guard] = sleep[guard] == undefined ? slept : sleep[guard] + slept;
+                
+                if(sleep[guard] > wg.max) {
+                    wg.max = sleep[guard];
+                    wg.id = guard;
+                    let wm = Math.max(...minutes[guard]);
+                    wg.minute = minutes[guard].findIndex(x => x == wm);
+                }
             }
         }
     }
 
-    let wg = -1;
-    let max = 0;
-    for (let i = 0; i < sleep.length; i++) {
-        const s = sleep[i];
-
-        if (s) {
-            if (s > max) {
-                max = s;
-                wg = i;
-            }
-        }
-    }
-
-    let wm = Math.max(...minutes[wg]);
-    let maxi = minutes[wg].findIndex(x => x == wm);
-
-    console.log('Del 1: Sämsta vakten ' + wg + ' i minut ' + maxi + ' -> ' + wg * maxi);
+    console.log('Del 1: Sämsta vakten ' + wg.id + ' i minut ' + wg.minute + ' -> ' + wg.minute * wg.id);
     console.log('Del 2, sämsta vakten: ' + wg2.id + ' i minut ' + wg2.minute + ' -> ' + wg2.minute * +wg2.id);
 
 });
