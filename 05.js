@@ -15,22 +15,8 @@ read(args[0], function (data) {
 
     for (let l of lines) {
         if (l.length == 0) continue;
-        let react = '';
-        let reactions = true;
-        while (reactions) {
-            react = '';
-            let i = 0;
-            while (i < l.length) {
-                if (Math.abs(l.charCodeAt(i) - l.charCodeAt(i + 1)) == 32) {
-                    i += 2;
-                } else {
-                    react += l[i++];
-                }
-            }
-            reactions = react != l;
-            l = react;
-        }
-        console.log('Del 1. Units left: ' + react.length);
+
+        console.log('Del 1. Units left: ' + reaction(l).length);
     }
 
     // Del 2
@@ -42,23 +28,28 @@ read(args[0], function (data) {
         for (const unit of units) {
             let react = '';
             l = input.split('').filter(c => c.toLowerCase() != unit).join('');
-
-            let reactions = true;
-            while (reactions) {
-                react = '';
-                let i = 0;
-                while (i < l.length) {
-                    if (Math.abs(l.charCodeAt(i) - l.charCodeAt(i + 1)) == 32) {
-                        i += 2;
-                    } else {
-                        react += l[i++];
-                    }
-                }
-                reactions = react != l;
-                l = react;
-            }
-            polymers.push(react.length);
+            
+            polymers.push(reaction(l).length);
         }
         console.log('Del 2. Kortast polymer: ' + Math.min(...polymers));
     }
 });
+
+function reaction(chain) {
+    let reactions = true;
+    let react = '';
+    while (reactions) {
+        react = '';
+        let i = 0;
+        while (i < chain.length) {
+            if (Math.abs(chain.charCodeAt(i) - chain.charCodeAt(i + 1)) == 32) {
+                i += 2;
+            } else {
+                react += chain[i++];
+            }
+        }
+        reactions = react != chain;
+        chain = react;
+    }
+    return react;
+}
