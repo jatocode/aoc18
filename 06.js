@@ -32,15 +32,15 @@ read(args[0], function (data) {
     for (const node of nodes) {
         calculateDistances(grid, node, maxx, maxy);
     }
-    console.log(nodes);
+    //console.log(nodes);
 
     let ns = checkGrid(grid, maxx, maxy);
     let nn = ns.map(x => {
-        console.log(x);
-        x == undefined?0:x});
+        x == undefined ? 0 : x
+    });
     let max = Math.max(...nn);
-    //console.log(ns);
-    console.log('Största ytan: ' + (max+1));
+    console.log(nn, max);
+    console.log('Största ytan: ' + (max + 1));
 });
 
 function calculateDistances(grid, node, sx, sy) {
@@ -70,7 +70,7 @@ function checkGrid(grid, sx, sy) {
                 if (single == true) {
                     let id = node.dist.findIndex(x => x == mindist);
                     row += String.fromCharCode(id + 97);
-                    if(node.finite) {
+                    if (node.finite) {
                         nodes[id] = (nodes[id] || 0) + 1;
                     }
                 } else {
@@ -78,7 +78,7 @@ function checkGrid(grid, sx, sy) {
                 }
             }
         }
-       // console.log(row);
+        // console.log(row);
     }
     return nodes;
 }
