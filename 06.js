@@ -20,7 +20,7 @@ read(args[0], function (data) {
     let i = 0;
     for (const l of lines) {
         if (l.length == 0) continue;
-        let m = l.match(/(\d+),.*(\d+)/);
+        let m = l.match(/(\d+), (\d+)/);
         let x, y;
         [x, y] = [+m[1], +m[2]];
         let node = { id: i++, x: x, y: y, finite: true, dist: [] };
@@ -32,15 +32,17 @@ read(args[0], function (data) {
     for (const node of nodes) {
         calculateDistances(grid, node, maxx, maxy);
     }
-    //console.log(nodes);
-
     let ns = checkGrid(grid, maxx, maxy);
-    let nn = ns.map(x => {
-        x == undefined ? 0 : x
-    });
-    let max = Math.max(...nn);
-    console.log(nn, max);
-    console.log('Största ytan: ' + (max + 1));
+
+    let max = 0;
+    let maxi = -1;
+    for (let index = 0; index < ns.length; index++) {
+        if (ns[index] > max) {
+            max = ns[index];
+            maxi = index;
+        }
+    }
+    console.log('Största ytan: ' + max);
 });
 
 function calculateDistances(grid, node, sx, sy) {
@@ -55,9 +57,9 @@ function calculateDistances(grid, node, sx, sy) {
 
 function checkGrid(grid, sx, sy) {
     let nodes = [];
-    for (let y = 0; y <= sy; y++) {
+    for (let y = 0; y <= sy + 1; y++) {
         let row = '';
-        for (let x = 0; x <= sx; x++) {
+        for (let x = 0; x <= sx + 1; x++) {
             const node = grid[`${x}${y}`];
             if (y == 0 || y == sy) node.finite = false;
             if (x == 0 || x == sx) node.finite = false;
@@ -71,14 +73,14 @@ function checkGrid(grid, sx, sy) {
                     let id = node.dist.findIndex(x => x == mindist);
                     row += String.fromCharCode(id + 97);
                     if (node.finite) {
-                        nodes[id] = (nodes[id] || 0) + 1;
+                        nodes[id] = (nodes[id] || 1) + 1;
                     }
                 } else {
                     row += '.';
                 }
             }
         }
-        // console.log(row);
+        //console.log(row);
     }
     return nodes;
 }
