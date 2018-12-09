@@ -9,28 +9,47 @@ function read(file, callback) {
         callback(data);
     });
 }
+let visited = [];
+let nodes = [];
 
 read(args[0], function (data) {
     var lines = data.split('\n');
 
-    let steps = [];
+    let t = 0;
     for (let l of lines) {
         if (l.length == 0) continue;
         const m = l.match(/Step (.) must be finished before step (.) can begin/);
-        let before, after;
-        [first, next] = [ m[1], m[2] ];
 
-        if(!steps[first]) steps[first] = { children: [] };
-        steps[first].children.push(next);
+        [first, next] = [m[1], m[2]];
+        visited[first] = false;
+
+        if (!nodes[first]) nodes[first] = { id: first, children: [], wait: [] };
+        if (!nodes[next]) nodes[next] = { id: next, children: [], wait: [] };
+
+        nodes[next].wait.push(first);
+        nodes[first].children.push(next);
+
     }
-    
-    let steps2 = Object.keys(steps).map(k => { return [k, steps[k]]});
 
     let order = '';
-    while(steps2.length) {
-        const step = steps2.shift();
-        console.log(step);
-        order += step[0];
+    let ns = Object.keys(nodes).sort();
+
+    let i = 0;
+    while(ns.length > 0)
+    {
+        // Hitta första utan wait
+        let next = ns.find(n => nodes[n].wait.length == 0);
+        order += next;
+
+        // Ta bort den
+        let i = ns.findIndex(n => n == next);
+        if(i > -1) ns.splice(i, 1);
+
+        // Ta bort den från alla wait-listor pga klar
+        ns.forEach(s => {
+            let wi = nodes[s].wait.findIndex(n => n == next);
+            if(wi > -1) nodes[s].wait.splice(wi, 1);
+        });
     }
     console.log(order);
 });
