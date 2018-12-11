@@ -10,7 +10,7 @@ export class AocApp {
   @State() stars;
   intervalID: number;
   ticks: number = 0;
-  scale: number = 3;
+  scale: number = 1;
   stop: boolean = false;
 
   async componentWillLoad() {

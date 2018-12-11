@@ -10,8 +10,8 @@ export class AocLetter {
   @Prop() size: number = 10;
   @Prop() scale: number = 1;
 
-  top : number = -window.innerHeight/2;
-  left: number = 0;
+  top : number = -1500;
+  left: number = -1500;
 
   hostData() {
     const s = this.size;
