@@ -8,6 +8,10 @@ export class AocLetter {
   @Prop() x: number;
   @Prop() y: number;
   @Prop() size: number = 10;
+  @Prop() scale: number = 1;
+
+  top : number = -window.innerHeight/2;
+  left: number = 0;
 
   hostData() {
     const s = this.size;
@@ -18,8 +22,8 @@ export class AocLetter {
       cursor: 'pointer',
       width: s + 'px',
       height: s + 'px',
-      left: 50 + (this.x) + 'px',
-      top: 50 + (this.y) + 'px',
+      left: this.left + (this.x)*s/this.scale + 'px',
+      top: this.top + (this.y)*s/this.scale + 'px',
       borderRadius: (s / 2) + 'px',
       lineHeight: (s) + 'px',
     };
