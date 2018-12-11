@@ -26,6 +26,7 @@ export class AocLetter {
       top: this.top + (this.y)*s/this.scale + 'px',
       borderRadius: (s / 2) + 'px',
       lineHeight: (s) + 'px',
+      transition: 'transform 1s'
     };
 
     return {

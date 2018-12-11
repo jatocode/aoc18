@@ -24,7 +24,7 @@ read(args[0], function (data) {
         let x, y;
         [x, y] = [+m[1], +m[2]];
         let node = { id: i++, x: x, y: y, finite: true, dist: [] };
-        grid[`${x}${y}`] = node;
+        grid[pos(x,y)] = node;
         nodes[node.id] = node;
         if (x > maxx) maxx = x;
         if (y > maxy) maxy = y;
@@ -48,9 +48,9 @@ read(args[0], function (data) {
 function calculateDistances(grid, node, sx, sy) {
     for (let y = 0; y <= sy + 1; y++) {
         for (let x = 0; x <= sx + 1; x++) {
-            if (!grid[`${x}${y}`]) grid[`${x}${y}`] = { id: -1, dist: [], finite: true };
+            if (!grid[pos(x,y)]) grid[pos(x,y)] = { id: -1, dist: [], finite: true };
             let dist = Math.abs(node.x - x) + Math.abs(node.y - y);
-            grid[`${x}${y}`].dist[node.id] = dist;
+            grid[pos(x,y)].dist[node.id] = dist;
         }
     }
 }
@@ -60,7 +60,7 @@ function checkGrid(grid, sx, sy) {
     for (let y = 0; y <= sy + 1; y++) {
         let row = '';
         for (let x = 0; x <= sx + 1; x++) {
-            const node = grid[`${x}${y}`];
+            const node = grid[pos(x,y)];
             if (y == 0 || y == sy) node.finite = false;
             if (x == 0 || x == sx) node.finite = false;
 
@@ -84,3 +84,5 @@ function checkGrid(grid, sx, sy) {
     }
     return nodes;
 }
+
+function pos(x,y) { return `${x}:${y}` };
