@@ -13,10 +13,12 @@ import '@stencil/core';
 export namespace Components {
 
   interface AocLetter {
+    'size': number;
     'x': number;
     'y': number;
   }
   interface AocLetterAttributes extends StencilHTMLAttributes {
+    'size'?: number;
     'x'?: number;
     'y'?: number;
   }
