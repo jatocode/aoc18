@@ -17,9 +17,9 @@ function read(file, callback) {
 read(args[0], function (data) {
     var lines = data.split('\n');
 
-    const init = initialstate.split('');
+    const plants = initialstate.split('');
 
-    console.log(init);
+    console.log(plants);
     for (let l of lines) {
         if (l.length == 0) continue;
 
@@ -31,9 +31,9 @@ read(args[0], function (data) {
         let N  = l[9];
         
         console.log({L1, L2, R1, R2, N});
-        for (let i = 0; i < init.length; i++) {
-            const C = init[i];
-
+        for (let i = 0; i < plants.length; i++) {
+            const C = plants[i];
+            
             
         }
     }
