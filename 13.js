@@ -12,30 +12,25 @@ function read(file, callback) {
 }
 
 read(args[0], function (data) {
-    var lines = data.split('\n');
+    let lines = data.split('\n');
     let carts, track;
     [carts, track] = findCartsAndTrack(lines);
-
+ 
     do {
-        //printTrack(track, carts);
         carts = sortCarts(carts);
-    } while (!runCarts(carts, track));
+    } while (runCarts(carts, track));
     printTrack(track, carts);
 
 });
 
-function runCarts(carts, lines) {
-    let crash = false;
+function runCarts(carts, track) {
     for (let cart of carts) {
-        let nextTrack = lines[cart.y + cart.vy].split('')[cart.x + cart.vx];
-
+        let nextTrack = track[cart.y + cart.vy].split('')[cart.x + cart.vx];
 
         if(cartPosition(cart.x + cart.vx, cart.y + cart.vy, carts)) {
             console.log('Crash at ' + (cart.x + +cart.vx) + ',' + (cart.y + +cart.vy));
-            crash = true;
-            break;
+            return false;
         }
-        //console.log({cart, nextTrack});
         cart.x += cart.vx;
         cart.y += cart.vy;
 
@@ -48,18 +43,19 @@ function runCarts(carts, lines) {
                 break;
             case '-':
             case '|':
-                // Keep doing it
                 break;
             case '+':
                 [vx, vy] = intersection(cart);
                 cart.turn = (cart.turn + 1) % 3;
                 break;
-            default: console.log('?'); break;
+            default: 
+                console.log('?: "' + nextTrack + '"'); 
+                return false;
         }
         cart.vx = vx;
         cart.vy = vy;
     }
-    return crash;
+    return true;
 }
 
 function turn(t, cart) {
@@ -67,16 +63,12 @@ function turn(t, cart) {
     let vy = cart.vy;
     switch (t) {
         case '/':
-            if (cart.vy == +1) { vx = -1; vy = 0; }
-            if (cart.vy == -1) { vx = 1; vy = 0; }
-            if (cart.vx == +1) { vx = 0; vy = - 1; }
-            if (cart.vx == -1) { vx = 0; vy = 1; }
+            vx = cart.vy * -1;
+            vy = cart.vx * -1;
             break;
         case '\\':
-            if (cart.vy == +1) { vx = 1; vy = 0; }
-            if (cart.vy == -1) { vx = -1; vy = 0; }
-            if (cart.vx == +1) { vx = 0; vy = 1; }
-            if (cart.vx == -1) { vx = 0; vy = -1; }
+            vx = cart.vy * 1;
+            vy = cart.vx * 1;
             break;
     }
     return [vx, vy];
@@ -84,17 +76,19 @@ function turn(t, cart) {
 
 function intersection(cart) {
     // left, straight, right, ...
-    const rule = ['l', undefined, 'r'][cart.turn];
+    const rule = ['l', 's', 'r'][cart.turn];
     let vx = cart.vx;
     let vy = cart.vy;
     switch (rule) {
         case 'l':
             vx = cart.vy * 1;
-            vy = cart.vx;
+            vy = cart.vx * 1;
             break;
         case 'r':
             vx = cart.vy * -1;
-            vy = cart.vx;
+            vy = cart.vx * -1;
+            break;
+        case 's':
             break;
     }
 
@@ -115,13 +109,14 @@ function findCartsAndTrack(lines) {
             switch (symbol) {
                 case '^': pos = c; vx = 0; vy = -1; t = '|'; break;
                 case 'v': pos = c; vx = 0; vy = 1; t = '|'; break;
-                case '>': pos = c; vx = 1; vy = 0; t = '-'; break;
+                case '>': pos = c; vx = 1; vy = 0; t = '-'; console.log('>'); break;
                 case '<': pos = c; vx = -1; vy = 0; t = '-'; break;
             }
             if (pos > 0) {
                 const cart = { x: pos, y: i, turn: 0, vx: vx, vy: vy, c: symbol };
                 carts.push(cart);
-                track[i] = lines[i].substr(0, pos) + t + lines[i].substr(pos + 1);
+                lines[i] = lines[i].substr(0, pos) + t + lines[i].substr(pos + 1);
+                track[i] = lines[i];
             }
         }
     }
@@ -129,6 +124,7 @@ function findCartsAndTrack(lines) {
 }
 
 function printTrack(track, carts) {
+    console.log('\x1Bc');
     for (let y = 0; y < track.length; y++) {
         let row = '';
         for (let x = 0; x < track[y].length; x++) {
@@ -153,6 +149,8 @@ function cartPosition(x, y, carts) {
 
 function sortCarts(carts) {
     return carts.sort((a, b) => {
+        return a.x - b.x;
+    }).sort((a,b) => {
         return a.y - b.y;
     });
 }
