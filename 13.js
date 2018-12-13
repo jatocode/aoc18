@@ -16,12 +16,10 @@ read(args[0], function (data) {
     let carts, track;
     [carts, track] = findCartsAndTrack(lines);
 
-    let test = 0;
     do {
         //printTrack(track, carts);
-        console.log();
         carts = sortCarts(carts);
-    } while (test++ < 15 && !runCarts(carts, track));
+    } while (!runCarts(carts, track));
     printTrack(track, carts);
 
 });
@@ -35,6 +33,7 @@ function runCarts(carts, lines) {
         if(cartPosition(cart.x + cart.vx, cart.y + cart.vy, carts)) {
             console.log('Crash at ' + (cart.x + +cart.vx) + ',' + (cart.y + +cart.vy));
             crash = true;
+            break;
         }
         //console.log({cart, nextTrack});
         cart.x += cart.vx;
@@ -137,6 +136,7 @@ function printTrack(track, carts) {
         }
         console.log(row);
     }
+    console.log();
 }
 
 function cartPosition(x, y, carts) {
